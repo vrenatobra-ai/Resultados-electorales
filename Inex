@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Resultados Electorales</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background-color: #f2f2f2; }
+    img { max-width: 80px; }
+    .resumen { margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Resultados Electorales</h1>
+
+  <label>Padrón total: 
+    <input type="number" id="padron" value="1000" oninput="calcular()">
+  </label>
+
+  <h2>Candidatos</h2>
+  <table id="tabla">
+    <thead>
+      <tr>
+        <th>Imagen (URL)</th>
+        <th>Nombre</th>
+        <th>Partido</th>
+        <th>Votos</th>
+        <th>Porcentaje</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <input type="text" placeholder="Pega URL de imagen" oninput="mostrarImagen(this)">
+        </td>
+        <td><input type="text" value="Candidato 1"></td>
+        <td><input type="text" value="Partido A"></td>
+        <td><input type="number" value="0" oninput="calcular()"></td>
+        <td class="porcentaje">0.000%</td>
+      </tr>
+      <tr>
+        <td>
+          <input type="text" placeholder="Pega URL de imagen" oninput="mostrarImagen(this)">
+        </td>
+        <td><input type="text" value="Candidato 2"></td>
+        <td><input type="text" value="Partido B"></td>
+        <td><input type="number" value="0" oninput="calcular()"></td>
+        <td class="porcentaje">0.000%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="resumen">
+    Votos escrutados: <span id="escrutados">0</span><br>
+    Participación: <span id="participacion">0.000%</span>
+  </div>
+
+  <script>
+    function calcular() {
+      const padron = parseFloat(document.getElementById("padron").value);
+      const filas = document.querySelectorAll("#tabla tbody tr");
+      let totalVotos = 0;
+
+      filas.forEach(fila => {
+        const votos = parseFloat(fila.cells[3].querySelector("input").value) || 0;
+        totalVotos += votos;
+      });
+
+      // Mostrar votos escrutados
+      document.getElementById("escrutados").textContent = totalVotos;
+
+      // Calcular participación
+      const participacion = padron > 0 ? ((totalVotos / padron) * 100).toFixed(3) : 0;
+      document.getElementById("participacion").textContent = participacion + "%";
+
+      // Calcular porcentajes por candidato
+      filas.forEach(fila => {
+        const votos = parseFloat(fila.cells[3].querySelector("input").value) || 0;
+        const porcentaje = totalVotos > 0 ? ((votos / totalVotos) * 100).toFixed(3) : 0;
+        fila.querySelector(".porcentaje").textContent = porcentaje + "%";
+      });
+    }
+
+    function mostrarImagen(input) {
+      const url = input.value.trim();
+      if (url) {
+        const img = document.createElement("img");
+        img.src = url;
+        input.replaceWith(img);
+      }
+    }
+  </script>
+</body>
+</html>
